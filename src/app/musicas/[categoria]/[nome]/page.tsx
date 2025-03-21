@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { useRef  } from "react";
 
 interface Musica {
   nome: string;
@@ -59,10 +58,6 @@ export default function MusicaDetalhes() {
       const fontRatioHeight = (alturaDiv / alturaTexto) * 0.9;
       novaFonte = Math.min(novaFonte, fontRatioHeight * fontSize);
 
-      // Calcular o tamanho ideal para a fonte, ajustando para caber sem cortar
-      novaFonte = Math.min(novaFonte, 40); // Limitar a fonte a 40px
-      novaFonte = Math.max(novaFonte, 10); // Garantir que a fonte não fique menor que 10px
-
       // Atualizar o tamanho da fonte
       setFontSize(novaFonte);
     }
@@ -105,13 +100,12 @@ export default function MusicaDetalhes() {
           </div>
 
           <pre
-      ref={preRef}
-      style={{ fontSize: `${fontSize}px` }}
-      className="p-3 w-full h-full bg-gray-200 text-gray-900 rounded-md mt-4 whitespace-pre overflow-hidden"
-    >
-      {abaAtiva === "letra" ? musica.letra : musica.cifra}
-    </pre>
-
+            ref={preRef}
+            style={{ fontSize: `${fontSize}px` }}
+            className="p-3 w-full h-full bg-gray-200 text-gray-900 rounded-md mt-4 whitespace-pre overflow-hidden"
+          >
+            {abaAtiva === "letra" ? musica.letra : musica.cifra}
+          </pre>
         </>
       ) : (
         <p className="text-gray-900">Carregando...</p>
