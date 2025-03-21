@@ -105,7 +105,7 @@ export default function MusicaDetalhes() {
                 columnCount: columns, // Usa a quantidade de colunas calculada
                 columnGap: "3rem", // Espaço entre as colunas
                 textAlign: "justify", // Justificar o texto
-                fontSize: "clamp(6px, 2vw, 24px)", // Ajusta a fonte para ser bem pequena em telas muito pequenas (mínimo 8px), e maior para telas grandes
+                fontSize: "clamp(6px, 3vw, 24px)", // Ajusta a fonte para ser bem pequena em telas muito pequenas (mínimo 8px), e maior para telas grandes
                 lineHeight: "1.5", // Melhora a legibilidade
                 padding: "1.5rem", // Aumenta o padding para dar mais espaço ao conteúdo
               }}
