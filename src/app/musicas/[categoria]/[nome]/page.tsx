@@ -64,7 +64,7 @@ export default function MusicaDetalhes() {
   if (error) return <div className="p-5 text-red-500">{error}</div>;
 
   return (
-    <div className="p-2 flex flex-col relative items-center min-h-screen bg-gray-100">
+    <div className="p-1 flex flex-col relative items-center min-h-screen bg-gray-100">
       {/* Botão para voltar */}
       <button
         onClick={() => router.back()}
@@ -74,7 +74,7 @@ export default function MusicaDetalhes() {
       </button>
 
       {musica ? (
-        <div className="flex flex-col items-center mt-16 sm:mt-19 lg:mt-24"> {/* Adicionando margens superiores responsivas */}
+        <div className="flex flex-col items-center mt-16 sm:mt-24 lg:mt-32"> {/* Adicionando margens superiores responsivas */}
           <h1 className="text-4xl font-bold text-gray-800">{musica.nome}</h1>
           <h2 className="text-lg text-gray-700">Artista: {musica.artista}</h2>
 
@@ -105,7 +105,7 @@ export default function MusicaDetalhes() {
                 columnCount: columns, // Usa a quantidade de colunas calculada
                 columnGap: "3rem", // Espaço entre as colunas
                 textAlign: "justify", // Justificar o texto
-                fontSize: "clamp(6px, 3vw, 16px)", // Ajusta a fonte para ser bem pequena em telas muito pequenas (mínimo 8px)
+                fontSize: "clamp(6px, 2vw, 24px)", // Ajusta a fonte para ser bem pequena em telas muito pequenas (mínimo 8px), e maior para telas grandes
                 lineHeight: "1.5", // Melhora a legibilidade
                 padding: "1.5rem", // Aumenta o padding para dar mais espaço ao conteúdo
               }}
