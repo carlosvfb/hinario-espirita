@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 interface Musica {
@@ -40,38 +40,6 @@ export default function MusicaDetalhes() {
     fetchMusica();
   }, [nomeMusica]);
 
-  const preRef = useRef<HTMLPreElement>(null);
-  const [fontSize, setFontSize] = useState(16);
-
-  // Função para ajustar o tamanho da fonte dinamicamente com base apenas na largura da div
-  const ajustaFonte = () => {
-    if (preRef.current) {
-      const larguraDiv = preRef.current.clientWidth; // Largura da div
-      const larguraTexto = preRef.current.scrollWidth; // Largura do conteúdo
-
-      // Ajuste da fonte baseado apenas na largura da div
-      let novaFonte = (larguraDiv / larguraTexto) * fontSize * 0.9;
-
-      // Limitar a fonte para não ficar muito grande ou muito pequena
-      novaFonte = Math.min(novaFonte, 80); // Limitar a fonte a 40px
-      novaFonte = Math.max(novaFonte, 10); // Garantir que a fonte não fique menor que 10px
-
-      // Atualizar o tamanho da fonte
-      setFontSize(novaFonte);
-    }
-  };
-
-  // Ajusta o tamanho da fonte assim que o componente for montado
-  useEffect(() => {
-    ajustaFonte();
-  }, []);
-
-  // Ajusta a fonte ao redimensionar a tela
-  useEffect(() => {
-    const onResize = () => ajustaFonte();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
 
   if (error) return <div className="p-5 text-red-500">{error}</div>;
 
@@ -97,13 +65,10 @@ export default function MusicaDetalhes() {
             </button>
           </div>
 
-          <pre
-            ref={preRef}
-            style={{ fontSize: `${fontSize}px` }}
-            className="p-3 w-full bg-gray-200 text-gray-900 rounded-md mt-4 whitespace-pre overflow-hidden"
-          >
-            {abaAtiva === "letra" ? musica.letra : musica.cifra}
-          </pre>
+          <pre className="p-3 w-full text-[clamp(10px,4vw,40px)] bg-gray-300 rounded-md mt-4 overflow-hidden">
+  {abaAtiva === "letra" ? musica.letra : musica.cifra}
+</pre>
+
         </>
       ) : (
         <p className="text-gray-900">Carregando...</p>
