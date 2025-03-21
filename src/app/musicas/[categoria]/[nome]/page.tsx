@@ -43,22 +43,18 @@ export default function MusicaDetalhes() {
   const preRef = useRef<HTMLPreElement>(null);
   const [fontSize, setFontSize] = useState(16);
 
-  // Função para ajustar o tamanho da fonte dinamicamente sem cortar as letras
+  // Função para ajustar o tamanho da fonte dinamicamente com base apenas na largura da div
   const ajustaFonte = () => {
     if (preRef.current) {
       const larguraDiv = preRef.current.clientWidth; // Largura da div
-
-      // Usando window.innerHeight para considerar a altura visível da janela
-      const alturaDiv = window.innerHeight; // Altura da janela sem a barra superior
       const larguraTexto = preRef.current.scrollWidth; // Largura do conteúdo
-      const alturaTexto = preRef.current.scrollHeight; // Altura do conteúdo
 
-      // Ajuste da fonte baseado na largura da div e garantindo que o texto ocupe a área
+      // Ajuste da fonte baseado apenas na largura da div
       let novaFonte = (larguraDiv / larguraTexto) * fontSize * 0.9;
 
-      // Ajuste para garantir que a fonte não ultrapasse a altura da div
-      const fontRatioHeight = (alturaDiv / alturaTexto) * 0.9;
-      novaFonte = Math.min(novaFonte, fontRatioHeight * fontSize);
+      // Limitar a fonte para não ficar muito grande ou muito pequena
+      novaFonte = Math.min(novaFonte, 80); // Limitar a fonte a 40px
+      novaFonte = Math.max(novaFonte, 10); // Garantir que a fonte não fique menor que 10px
 
       // Atualizar o tamanho da fonte
       setFontSize(novaFonte);
@@ -104,7 +100,7 @@ export default function MusicaDetalhes() {
           <pre
             ref={preRef}
             style={{ fontSize: `${fontSize}px` }}
-            className="p-3 w-full h-full bg-gray-200 text-gray-900 rounded-md mt-4 whitespace-pre overflow-hidden"
+            className="p-3 w-full bg-gray-200 text-gray-900 rounded-md mt-4 whitespace-pre overflow-hidden"
           >
             {abaAtiva === "letra" ? musica.letra : musica.cifra}
           </pre>
