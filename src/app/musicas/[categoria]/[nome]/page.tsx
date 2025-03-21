@@ -47,7 +47,9 @@ export default function MusicaDetalhes() {
   const ajustaFonte = () => {
     if (preRef.current) {
       const larguraDiv = preRef.current.clientWidth; // Largura da div
-      const alturaDiv = preRef.current.clientHeight; // Altura da div
+
+      // Usando window.innerHeight para considerar a altura visível da janela
+      const alturaDiv = window.innerHeight; // Altura da janela sem a barra superior
       const larguraTexto = preRef.current.scrollWidth; // Largura do conteúdo
       const alturaTexto = preRef.current.scrollHeight; // Altura do conteúdo
 
