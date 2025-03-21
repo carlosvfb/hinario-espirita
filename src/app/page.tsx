@@ -33,13 +33,16 @@ export default function Categorias() {
   }, []);
 
   return (
-    <div>
-      <h1>Categorias</h1>
-      <ul>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-5">
+      <h1 className="text-4xl font-bold text-gray-800 mb-8">Categorias</h1>
+
+      <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-5xl">
         {categorias.map((categoria) => (
-          <li key={categoria}>
+          <li key={categoria} className="flex justify-center">
             <Link href={`/musicas/${removerAcentos(categoria)}`}>
-              <button>{categoria}</button>
+              <button className="w-full text-center text-2xl font-semibold p-6 bg-white shadow-lg rounded-lg border border-gray-300 text-gray-900 hover:bg-gray-200 hover:scale-105 transition duration-300">
+                {categoria}
+              </button>
             </Link>
           </li>
         ))}
@@ -47,4 +50,3 @@ export default function Categorias() {
     </div>
   );
 }
-

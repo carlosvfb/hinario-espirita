@@ -30,8 +30,8 @@ export default function MusicasPorCategoria() {
         const response = await fetch("https://servidor-hinario.vercel.app/musicas");
         const data: Musica[] = await response.json();
 
-        const musicasFiltradas = data.filter((musica) =>
-          removerAcentos(musica.categoria.toLowerCase()) === removerAcentos(categoria.toLowerCase())
+        const musicasFiltradas = data.filter(
+          (musica) => removerAcentos(musica.categoria.toLowerCase()) === removerAcentos(categoria.toLowerCase())
         );
 
         setMusicas(musicasFiltradas);
@@ -45,28 +45,37 @@ export default function MusicasPorCategoria() {
   }, [categoria]);
 
   if (error) {
-    return <div className="p-5 text-red-500">{error}</div>;
+    return <div className="p-5 text-red-500 text-center">{error}</div>;
   }
 
   return (
-    <div className="p-5">
-      <h1 className="text-3xl font-bold mb-4">Músicas da Categoria: {categoria}</h1>
-      <ul className="space-y-3">
+    <div className="min-h-screen relative bg-gray-100 flex flex-col justify-center items-center p-5">
+      {/* Botão de voltar */}
+      <button
+        onClick={() => router.back()}
+        className="mb-6 px-6 py-3 absolute top-5 left-5 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-800 transition duration-300 shadow-md"
+      >
+        ← Voltar
+      </button>
+
+      <h1 className="text-4xl font-bold text-gray-800 mb-8">{categoria}</h1>
+
+      <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-5xl">
         {musicas.length > 0 ? (
           musicas.map((musica) => (
-            <li key={musica.nome} className="flex justify-between items-center">
+            <li key={musica.nome} className="flex justify-center">
               <button
                 onClick={() =>
                   router.push(`/musicas/${encodeURIComponent(musica.categoria)}/${encodeURIComponent(musica.nome)}`)
                 }
-                className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"
+                className="w-full text-center text-2xl font-semibold p-6 bg-white shadow-lg rounded-lg border border-gray-300 text-gray-900 hover:bg-gray-200 hover:scale-105 transition duration-300"
               >
                 {musica.nome} - {musica.artista}
               </button>
             </li>
           ))
         ) : (
-          <p className="text-gray-500">Não há músicas nessa categoria.</p>
+          <p className="text-gray-500 text-lg">Não há músicas nessa categoria.</p>
         )}
       </ul>
     </div>
