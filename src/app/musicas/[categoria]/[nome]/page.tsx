@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useRef  } from "react";
 
 interface Musica {
   nome: string;
@@ -40,6 +41,45 @@ export default function MusicaDetalhes() {
     fetchMusica();
   }, [nomeMusica]);
 
+  const preRef = useRef<HTMLPreElement>(null);
+  const [fontSize, setFontSize] = useState(16);
+
+  // Função para ajustar o tamanho da fonte dinamicamente sem cortar as letras
+  const ajustaFonte = () => {
+    if (preRef.current) {
+      const larguraDiv = preRef.current.clientWidth; // Largura da div
+      const alturaDiv = preRef.current.clientHeight; // Altura da div
+      const larguraTexto = preRef.current.scrollWidth; // Largura do conteúdo
+      const alturaTexto = preRef.current.scrollHeight; // Altura do conteúdo
+
+      // Ajuste da fonte baseado na largura da div e garantindo que o texto ocupe a área
+      let novaFonte = (larguraDiv / larguraTexto) * fontSize * 0.9;
+
+      // Ajuste para garantir que a fonte não ultrapasse a altura da div
+      const fontRatioHeight = (alturaDiv / alturaTexto) * 0.9;
+      novaFonte = Math.min(novaFonte, fontRatioHeight * fontSize);
+
+      // Calcular o tamanho ideal para a fonte, ajustando para caber sem cortar
+      novaFonte = Math.min(novaFonte, 40); // Limitar a fonte a 40px
+      novaFonte = Math.max(novaFonte, 10); // Garantir que a fonte não fique menor que 10px
+
+      // Atualizar o tamanho da fonte
+      setFontSize(novaFonte);
+    }
+  };
+
+  // Ajusta o tamanho da fonte assim que o componente for montado
+  useEffect(() => {
+    ajustaFonte();
+  }, []);
+
+  // Ajusta a fonte ao redimensionar a tela
+  useEffect(() => {
+    const onResize = () => ajustaFonte();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   if (error) return <div className="p-5 text-red-500">{error}</div>;
 
   return (
@@ -47,40 +87,34 @@ export default function MusicaDetalhes() {
       {musica ? (
         <>
           <h1 className="text-3xl font-bold">{musica.nome}</h1>
-          <h2 className="text-lg text-gray-600">Artista: {musica.artista}</h2>
+          <h2 className="text-lg text-gray-900">Artista: {musica.artista}</h2>
 
-          {/* Botões para alternar entre Letra e Cifra */}
           <div className="mt-4 flex gap-3">
             <button
               onClick={() => setAbaAtiva("letra")}
-              className={`px-4 py-2 rounded-md ${abaAtiva === "letra" ? "bg-blue-500 text-white" : "bg-gray-700"}`}
+              className={`px-4 py-2 rounded-md ${abaAtiva === "letra" ? "bg-blue-500 text-gray-900" : "bg-gray-200"}`}
             >
               Letra
             </button>
             <button
               onClick={() => setAbaAtiva("cifra")}
-              className={`px-4 py-2 rounded-md ${abaAtiva === "cifra" ? "bg-blue-500 text-white" : "bg-gray-700"}`}
+              className={`px-4 py-2 rounded-md ${abaAtiva === "cifra" ? "bg-blue-500 text-gray-900" : "bg-gray-200"}`}
             >
               Cifra
             </button>
           </div>
 
-          {/* Exibição da aba selecionada */}
-          <pre className="p-3 bg-gray-700 rounded-md mt-4 whitespace-pre-wrap">
-            {abaAtiva === "letra" ? musica.letra : musica.cifra}
-          </pre>
+          <pre
+      ref={preRef}
+      style={{ fontSize: `${fontSize}px` }}
+      className="p-3 w-full h-full bg-gray-200 text-gray-900 rounded-md mt-4 whitespace-pre overflow-hidden"
+    >
+      {abaAtiva === "letra" ? musica.letra : musica.cifra}
+    </pre>
 
-          <a
-            href={musica.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 inline-block px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-          >
-            Ver no Cifra Club
-          </a>
         </>
       ) : (
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-gray-900">Carregando...</p>
       )}
     </div>
   );
