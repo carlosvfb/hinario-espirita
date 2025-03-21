@@ -65,7 +65,7 @@ export default function MusicaDetalhes() {
             </button>
           </div>
 
-          <pre className="p-3 w-full text-[clamp(10px,2vw,40px)] bg-gray-300 rounded-md mt-4 overflow-hidden">
+          <pre className="p-3 w-full text-[clamp(10px,3vw,40px)] bg-gray-300 rounded-md mt-4 overflow-hidden">
   {abaAtiva === "letra" ? musica.letra : musica.cifra}
 </pre>
 
