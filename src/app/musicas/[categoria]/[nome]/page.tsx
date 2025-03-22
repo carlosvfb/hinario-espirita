@@ -43,9 +43,7 @@ export default function MusicaDetalhes() {
 
     // Função para ajustar as colunas dependendo da largura da tela
     const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setColumns(3); // 3 colunas para telas grandes
-      } else if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 768) {
         setColumns(2); // 2 colunas para telas médias
       } else {
         setColumns(1); // 1 coluna para telas pequenas
