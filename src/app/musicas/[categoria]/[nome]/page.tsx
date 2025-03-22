@@ -72,7 +72,7 @@ export default function MusicaDetalhes() {
       </button>
 
       {musica ? (
-        <div className="flex flex-col items-center mt-16 sm:mt-19 lg:mt-24"> {/* Adicionando margens superiores responsivas */}
+        <div className="flex flex-col items-center mt-16 sm:mt-19 lg:mt-12"> {/* Adicionando margens superiores responsivas */}
           <h1 className="text-4xl font-bold text-gray-800">{musica.nome}</h1>
           <h2 className="text-lg text-gray-700">Artista: {musica.artista}</h2>
 
