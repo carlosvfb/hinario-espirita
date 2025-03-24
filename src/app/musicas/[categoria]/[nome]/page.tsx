@@ -6,8 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 const formatarParaURL = (str: string) => {
   return str
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // Remove acentos
-    .replace(/\s+/g, "-") // Substitui espaços por hífens
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "-") 
     .toLowerCase();
 };
 
@@ -17,14 +17,14 @@ interface Musica {
   categoria: string;
   letra: string;
   cifra: string;
-  cifraSimplificada: string; // Adicionando a cifra simplificada
+  cifraSimplificada: string;
 }
 
 export default function MusicaDetalhes() {
   const [musica, setMusica] = useState<Musica | null>(null);
   const [error, setError] = useState<string>("");
   const [abaAtiva, setAbaAtiva] = useState<"letra" | "cifra" | "cifraSimplificada">("letra");
-  const [columns, setColumns] = useState<number>(1); // Controla o número de colunas
+  const [columns, setColumns] = useState<number>(1);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -41,7 +41,6 @@ export default function MusicaDetalhes() {
 
         const data: Musica[] = await response.json();
 
-        // Filtrando a música com categoria e nome formatados para URL
         const musicaEncontrada = data.find(
           (musica) =>
             formatarParaURL(musica.categoria) === categoriaUrl &&
@@ -59,7 +58,6 @@ export default function MusicaDetalhes() {
 
     fetchMusica();
 
-    // Ajusta a quantidade de colunas no resize
     const handleResize = () => {
       setColumns(window.innerWidth >= 768 ? 2 : 1);
     };
@@ -74,9 +72,8 @@ export default function MusicaDetalhes() {
 
   return (
     <div className="p-1 flex flex-col relative items-center min-h-screen bg-gray-100">
-      {/* Botão para voltar */}
       <button
-        onClick={() => router.push("/categoria")}
+        onClick={() => router.push(`/musicas/${musica?.categoria}`)}
         className="mb-6 px-4 sm:px-6 py-2 sm:py-3 bg-gray-600 absolute top-5 left-5 text-white font-semibold rounded-lg hover:bg-gray-800 transition duration-300 shadow-md text-sm sm:text-base"
       >
         ← Voltar
@@ -87,7 +84,6 @@ export default function MusicaDetalhes() {
           <h1 className="text-4xl font-bold text-gray-800">{musica.nome}</h1>
           <h2 className="text-lg text-gray-700">Artista: {musica.artista}</h2>
 
-          {/* Botões de alternância entre Letra, Cifra e Cifra Simplificada */}
           <div className="mt-4 flex gap-3">
             <button
               onClick={() => setAbaAtiva("letra")}
