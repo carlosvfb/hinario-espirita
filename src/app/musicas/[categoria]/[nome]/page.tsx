@@ -73,7 +73,8 @@ export default function MusicaDetalhes() {
   return (
     <div className="p-1 flex flex-col relative items-center min-h-screen bg-gray-100">
       <button
-        onClick={() => router.push(`/musicas/${musica?.categoria}`)}
+        onClick={() => router.push(`/musicas/${formatarParaURL(musica?.categoria || "")}`)}
+        disabled={!musica}
         className="mb-6 px-4 sm:px-6 py-2 sm:py-3 bg-gray-600 absolute top-5 left-5 text-white font-semibold rounded-lg hover:bg-gray-800 transition duration-300 shadow-md text-sm sm:text-base"
       >
         ← Voltar
