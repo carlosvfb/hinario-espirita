@@ -66,7 +66,7 @@ export default function MusicasPorCategoria() {
     <div className="min-h-screen relative bg-gray-100 flex flex-col justify-center items-center p-5">
       {/* Botão de voltar */}
       <button
-        onClick={() => router.back()}
+        onClick={() => router.push("/")}
         className="mb-6 px-6 py-3 absolute top-5 left-5 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-800 transition duration-300 shadow-md"
       >
         ← Voltar
