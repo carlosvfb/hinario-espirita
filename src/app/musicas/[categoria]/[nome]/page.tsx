@@ -3,36 +3,54 @@
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
+const formatarParaURL = (str: string) => {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+    .replace(/\s+/g, "-") // Substitui espaços por hífens
+    .toLowerCase();
+};
+
 interface Musica {
   nome: string;
   artista: string;
   categoria: string;
   letra: string;
   cifra: string;
-  url: string;
+  cifraSimplificada: string; // Adicionando a cifra simplificada
 }
 
 export default function MusicaDetalhes() {
   const [musica, setMusica] = useState<Musica | null>(null);
   const [error, setError] = useState<string>("");
-  const [abaAtiva, setAbaAtiva] = useState<"letra" | "cifra">("letra");
+  const [abaAtiva, setAbaAtiva] = useState<"letra" | "cifra" | "cifraSimplificada">("letra");
   const [columns, setColumns] = useState<number>(1); // Controla o número de colunas
 
   const router = useRouter();
   const pathname = usePathname();
   const pathParts = pathname.split("/");
-  const nomeMusica = decodeURIComponent(pathParts[3] || "");
+
+  const categoriaUrl = decodeURIComponent(pathParts[2] || "");
+  const nomeMusicaUrl = decodeURIComponent(pathParts[3] || "");
 
   useEffect(() => {
     const fetchMusica = async () => {
       try {
-        const response = await fetch(
-          `https://servidor-hinario.vercel.app/musicas/${encodeURIComponent(nomeMusica)}`
-        );
-        if (!response.ok) throw new Error("Música não encontrada");
+        const response = await fetch("https://servidor-hinario.vercel.app/musicas");
+        if (!response.ok) throw new Error("Erro ao buscar músicas");
 
-        const data: Musica = await response.json();
-        setMusica(data);
+        const data: Musica[] = await response.json();
+
+        // Filtrando a música com categoria e nome formatados para URL
+        const musicaEncontrada = data.find(
+          (musica) =>
+            formatarParaURL(musica.categoria) === categoriaUrl &&
+            formatarParaURL(musica.nome) === nomeMusicaUrl
+        );
+
+        if (!musicaEncontrada) throw new Error("Música não encontrada");
+
+        setMusica(musicaEncontrada);
       } catch (err) {
         console.error(err);
         setError("Não foi possível carregar os detalhes da música.");
@@ -41,23 +59,16 @@ export default function MusicaDetalhes() {
 
     fetchMusica();
 
-    // Função para ajustar as colunas dependendo da largura da tela
+    // Ajusta a quantidade de colunas no resize
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setColumns(2); // 2 colunas para telas médias
-      } else {
-        setColumns(1); // 1 coluna para telas pequenas
-      }
+      setColumns(window.innerWidth >= 768 ? 2 : 1);
     };
 
-    // Adicionando event listener para detectar resize e ajustar o layout
     window.addEventListener("resize", handleResize);
-    handleResize(); // Chama para definir o valor inicial
+    handleResize();
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [nomeMusica]);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [categoriaUrl, nomeMusicaUrl]);
 
   if (error) return <div className="p-5 text-red-500">{error}</div>;
 
@@ -72,10 +83,11 @@ export default function MusicaDetalhes() {
       </button>
 
       {musica ? (
-        <div className="flex flex-col items-center mt-16 sm:mt-19 lg:mt-12"> {/* Adicionando margens superiores responsivas */}
+        <div className="flex flex-col items-center mt-16 sm:mt-19 lg:mt-12">
           <h1 className="text-4xl font-bold text-gray-800">{musica.nome}</h1>
           <h2 className="text-lg text-gray-700">Artista: {musica.artista}</h2>
 
+          {/* Botões de alternância entre Letra, Cifra e Cifra Simplificada */}
           <div className="mt-4 flex gap-3">
             <button
               onClick={() => setAbaAtiva("letra")}
@@ -93,22 +105,33 @@ export default function MusicaDetalhes() {
             >
               Cifra
             </button>
+            <button
+              onClick={() => setAbaAtiva("cifraSimplificada")}
+              className={`px-4 py-2 rounded-md ${
+                abaAtiva === "cifraSimplificada" ? "bg-blue-500 text-white" : "bg-gray-200"
+              }`}
+            >
+              Cifra Simplificada
+            </button>
           </div>
 
-          {/* Área de texto responsiva com colunas */}
           <div className="mt-4 w-full">
             <pre
               className="p-5 bg-white shadow-md rounded-lg text-gray-900 whitespace-pre-wrap overflow-hidden"
               style={{
-                columnCount: columns, // Usa a quantidade de colunas calculada
-                columnGap: "3rem", // Espaço entre as colunas
-                textAlign: "justify", // Justificar o texto
-                fontSize: "clamp(6px, 3vw, 24px)", // Ajusta a fonte para ser bem pequena em telas muito pequenas (mínimo 8px), e maior para telas grandes
-                lineHeight: "1.5", // Melhora a legibilidade
-                padding: "1.5rem", // Aumenta o padding para dar mais espaço ao conteúdo
+                columnCount: columns,
+                columnGap: "3rem",
+                textAlign: "justify",
+                fontSize: "clamp(6px, 3vw, 24px)",
+                lineHeight: "1.5",
+                padding: "1.5rem",
               }}
             >
-              {abaAtiva === "letra" ? musica.letra : musica.cifra}
+              {abaAtiva === "letra"
+                ? musica.letra
+                : abaAtiva === "cifra"
+                ? musica.cifra
+                : musica.cifraSimplificada}
             </pre>
           </div>
         </div>
