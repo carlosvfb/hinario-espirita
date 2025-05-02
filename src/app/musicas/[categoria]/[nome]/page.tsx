@@ -59,14 +59,43 @@ export default function MusicaDetalhes() {
     fetchMusica();
 
     const handleResize = () => {
-      setColumns(window.innerWidth >= 768 ? 2 : 1);
+      const width = window.innerWidth;
+      if (abaAtiva === "letra") {
+        // Para letras: máximo 2 colunas em telas grandes, 1 em pequenas
+        setColumns(width >= 1240 ? 2 : 1);
+      } else {
+        // Para cifras: 3 colunas em telas grandes, 2 em médias, 1 em pequenas
+        if (width >= 1851) {
+          setColumns(3);
+        } else if (width >= 1240) {
+          setColumns(2);
+        } else {
+          setColumns(2);
+        }
+      }
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize();
+    handleResize(); // Chama na montagem do componente
 
     return () => window.removeEventListener("resize", handleResize);
-  }, [categoriaUrl, nomeMusicaUrl]);
+  }, [categoriaUrl, nomeMusicaUrl, abaAtiva]); // Adiciona abaAtiva como dependência
+
+  // Atualiza colunas quando a aba ativa muda
+  useEffect(() => {
+    const width = window.innerWidth;
+    if (abaAtiva === "letra") {
+      setColumns(width >= 1240 ? 2 : 1);
+    } else {
+      if (width >= 1851) {
+        setColumns(3);
+      } else if (width >= 1240) {
+        setColumns(2);
+      } else {
+        setColumns(2);
+      }
+    }
+  }, [abaAtiva]);
 
   if (error) return <div className="p-5 text-red-500">{error}</div>;
 
@@ -113,23 +142,36 @@ export default function MusicaDetalhes() {
           </div>
 
           <div className="mt-4 w-full">
-            <pre
-              className="p-5 bg-white shadow-md rounded-lg text-gray-900 whitespace-pre-wrap overflow-hidden"
-              style={{
-                columnCount: columns,
-                columnGap: "3rem",
-                textAlign: "justify",
-                fontSize: "clamp(6px, 3vw, 24px)",
-                lineHeight: "1.5",
-                padding: "1.5rem",
-              }}
-            >
-              {abaAtiva === "letra"
-                ? musica.letra
-                : abaAtiva === "cifra"
-                ? musica.cifra
-                : musica.cifraSimplificada}
-            </pre>
+          {abaAtiva === "letra" ? (
+              <pre
+                className="p-5 bg-white shadow-md rounded-lg text-gray-900 whitespace-pre-wrap overflow-hidden"
+                style={{
+                  columnCount: columns,
+                  columnGap: "3rem",
+                  textAlign: "justify",
+                  fontSize: "clamp(6px, 3vw, 30px)",
+                  lineHeight: "1.5",
+                  padding: "1.5rem",
+                }}
+              >
+                {musica.letra}
+              </pre>
+            ) : (
+              <pre
+                className="bg-white w-full shadow-md rounded-lg text-gray-900 whitespace-pre-wrap overflow-hidden"
+                style={{
+                  columnCount: columns,
+                  columnGap: "0.06rem",
+                  textAlign: "justify",
+                  fontSize: "clamp(6px, 2vw, 24px)",
+                  lineHeight: "1.5",
+                  padding: "0.2rem",
+                  margin: "0 1px 3px 1px"
+                }}
+              >
+                {abaAtiva === "cifra" ? musica.cifra : musica.cifraSimplificada}
+              </pre>
+            )}
           </div>
         </div>
       ) : (
