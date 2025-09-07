@@ -20,132 +20,27 @@ interface Musica {
   cifraSimplificada: string;
 }
 
-// Função para processar cifras no estilo Cifra Club com alinhamento perfeito
-const processarCifraParaCifraClub = (cifraTexto: string) => {
-  const linhas = cifraTexto.split('\n');
-  const resultado: Array<{ acordes: string; letra: string; alinhado: boolean }> = [];
-  
-  for (let i = 0; i < linhas.length; i++) {
-    const linha = linhas[i];
-    
-    // Padrão mais robusto para detectar acordes
-    const temAcordes = /^[\s]*([A-G][#b]?[m]?[0-9]*[\s]+)*[A-G][#b]?[m]?[0-9]*[\s]*$/.test(linha) && 
-                      linha.trim().length > 0 && 
-                      linha.trim().length < 80 && 
-                      !/[a-z]/.test(linha.replace(/[A-G][#b]?m/g, ''));
-    
-    if (temAcordes) {
-      const proximaLinha = i + 1 < linhas.length ? linhas[i + 1] : '';
-      resultado.push({
-        acordes: linha,
-        letra: proximaLinha,
-        alinhado: true
-      });
-      i++; // Pula a próxima linha pois já foi processada
-    } else if (linha.trim().length > 0) {
-      resultado.push({
-        acordes: '',
-        letra: linha,
-        alinhado: false
-      });
-    } else {
-      resultado.push({
-        acordes: '',
-        letra: linha,
-        alinhado: false
-      });
-    }
-  }
-  
-  return resultado;
-};
-
-// Função para alinhar acordes com as letras de forma precisa
-const criarLinhaAlinhada = (acordes: string, letra: string) => {
-  if (!acordes.trim()) {
-    return { acordesFormatados: '', letraFormatada: letra };
-  }
-
-  // Remove espaços extras e divide os acordes
-  const acordesArray = acordes.trim().split(/\s+/).filter(a => a.length > 0);
-  const letraLimpa = letra.trim();
-  
-  if (acordesArray.length === 0 || letraLimpa.length === 0) {
-    return { acordesFormatados: acordes, letraFormatada: letra };
-  }
-
-  // Calcula posições dos acordes baseado no comprimento da letra
-  const posicoes: number[] = [];
-  const espacoDisponivel = Math.max(letraLimpa.length, 40); // Mínimo de 40 caracteres
-  
-  if (acordesArray.length === 1) {
-    posicoes.push(0);
-  } else {
-    // Distribui os acordes uniformemente
-    for (let i = 0; i < acordesArray.length; i++) {
-      const posicao = Math.floor((espacoDisponivel * i) / (acordesArray.length - 1));
-      posicoes.push(posicao);
-    }
-  }
-
-  // Constrói a linha de acordes alinhada
-  let acordesFormatados = '';
-  let posicaoAtual = 0;
-
-  acordesArray.forEach((acorde, index) => {
-    const posicaoDesejada = posicoes[index];
-    
-    if (posicaoDesejada >= posicaoAtual) {
-      const espacos = posicaoDesejada - posicaoAtual;
-      acordesFormatados += ' '.repeat(espacos) + acorde;
-    } else {
-      // Se não há espaço suficiente, adiciona pelo menos um espaço
-      acordesFormatados += ' ' + acorde;
-    }
-    
-    posicaoAtual = acordesFormatados.length;
-  });
-
-  return { acordesFormatados, letraFormatada: letra };
-};
 
 // Componente para renderizar linha com cifra alinhada
-const LinhaComCifra = ({ acordes, letra, alinhado }: { acordes: string; letra: string; alinhado: boolean }) => {
-  if (!alinhado) {
+const processarCifraComCores = (cifraTexto: string) => {
+  const linhas = cifraTexto.split('\n');
+  
+  return linhas.map((linha, index) => {
+    // Alterna cores: linhas ímpares (0, 2, 4...) com cor vermelha, pares (1, 3, 5...) com cor normal
+    const isLinhaColorida = index % 2 === 0;
+    
     return (
-      <div className="linha-sem-cifra" style={{ marginBottom: '0.3em' }}>
-        <div style={{ color: '#374151', whiteSpace: 'pre-wrap' }}>{letra}</div>
+      <div key={index} style={{ margin: 0, padding: 0 }}>
+        <span style={{ 
+          color: isLinhaColorida ? '#2563eb' : '#374151', // Azul para linhas ímpares, cinza para pares
+          fontWeight: 'bold' // Negrito para todas as linhas
+        }}>
+          {linha}
+        </span>
+        {index < linhas.length - 1 && '\n'}
       </div>
     );
-  }
-
-  const { acordesFormatados, letraFormatada } = criarLinhaAlinhada(acordes, letra);
-
-  return (
-    <div className="linha-com-cifra" style={{ marginBottom: '0.8em', fontFamily: 'monospace' }}>
-      <div 
-        style={{ 
-          color: '#2563eb', 
-          fontWeight: 'bold', 
-          fontSize: '0.9em',
-          whiteSpace: 'pre',
-          marginBottom: '0.1em',
-          minHeight: '1.2em'
-        }}
-      >
-        {acordesFormatados}
-      </div>
-      <div 
-        style={{ 
-          color: '#374151', 
-          whiteSpace: 'pre-wrap',
-          lineHeight: '1.3'
-        }}
-      >
-        {letraFormatada}
-      </div>
-    </div>
-  );
+  });
 };
 
 export default function MusicaDetalhes() {
@@ -233,14 +128,17 @@ export default function MusicaDetalhes() {
             <div className="h-full w-full overflow-auto">
           {abaAtiva === "letra" ? (
               <pre
-                className="bg-white shadow-md rounded-lg text-gray-900 whitespace-pre-wrap overflow-auto h-full"
+                className="bg-white w-full shadow-md rounded-lg overflow-auto h-full text-gray-700"
                 style={{
                   columnCount: columns,
                   columnGap: "3rem",
+                  columnFill: "auto",
                   textAlign: "justify",
                   fontSize: "clamp(8px, 2.5vw, 20px)",
-                  lineHeight: "1.4",
+                  lineHeight: "1.43",
                   padding: "1rem",
+                  fontWeight: "bold",
+                  fontFamily: "monospace"
                 }}
               >
                 {musica.letra}
@@ -255,22 +153,12 @@ export default function MusicaDetalhes() {
                   columnFill: "auto",
                   padding: "1.5rem",
                   fontSize: "clamp(12px, 2.2vw, 16px)",
-                  lineHeight: "1.4"
+                  lineHeight: "1.43",
+                  whiteSpace: "pre",
+                  fontFamily: "monospace"
                 }}
               >
-                {(() => {
-                  const cifraTexto = abaAtiva === "cifra" ? musica.cifra : musica.cifraSimplificada;
-                  const linhasProcessadas = processarCifraParaCifraClub(cifraTexto);
-                  
-                  return linhasProcessadas.map((item, index) => (
-                    <LinhaComCifra
-                      key={index}
-                      acordes={item.acordes}
-                      letra={item.letra}
-                      alinhado={item.alinhado}
-                    />
-                  ));
-                })()}
+                {processarCifraComCores(abaAtiva === "cifra" ? musica.cifra : musica.cifraSimplificada)}
               </div>
             )}
              </div>
