@@ -134,9 +134,9 @@ export default function MusicaDetalhes() {
                   columnGap: "3rem",
                   columnFill: "auto",
                   textAlign: "justify",
-                  fontSize: "clamp(8px, 2.5vw, 20px)",
+                  fontSize: "clamp(12px, 3vw, 24px)",
                   lineHeight: "1.43",
-                  padding: "1rem",
+                  padding: "0.5rem",
                   fontWeight: "bold",
                   fontFamily: "monospace"
                 }}
@@ -151,8 +151,8 @@ export default function MusicaDetalhes() {
                   columnWidth: "400px",
                   columnGap: "clamp(7.5rem, 10vw, 2rem)", // 7.5rem em telas menores, 2rem em maiores
                   columnFill: "auto",
-                  padding: "1.5rem",
-                  fontSize: "clamp(12px, 2.2vw, 16px)",
+                  padding: "0.5rem",
+                  fontSize: "clamp(10px, 2.8vw, 20px)",
                   lineHeight: "1.43",
                   whiteSpace: "pre",
                   fontFamily: "monospace"
