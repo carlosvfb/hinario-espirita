@@ -149,7 +149,7 @@ export default function MusicaDetalhes() {
                 style={{
                   columnCount: "auto",
                   columnWidth: "400px",
-                  columnGap: "clamp(7.5rem, 10vw, 2rem)", // 7.5rem em telas menores, 2rem em maiores
+                  columnGap: "clamp(13rem, 10vw, 0.2rem)", // 7.5rem em telas menores, 2rem em maiores
                   columnFill: "auto",
                   padding: "0.5rem",
                   fontSize: "clamp(10px, 2.8vw, 20px)",
